@@ -1,5 +1,16 @@
 version: 2.1
 
+commands:
+   # Exercise - Rollback
+   destroy_environment:
+     steps:
+       - run:
+           name: Destroy environment
+           # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable 
+           # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID 
+           when: on_fail
+           command: |
+             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 jobs:
   create_infrastructure: 
       docker:
@@ -32,8 +43,8 @@ jobs:
             command: |
                 ansible-playbook -i inventory.txt main-remote.yml
                 
-  # Exercise: Smoke Testing
-  smoke_test:
+  # Exercise: Smoke Testing test url responding
+  smoke_test_EX:
       docker:
         - image: alpine:latest
       steps:
@@ -48,11 +59,24 @@ jobs:
                 return 0
                 else
                 return 1
-                fi              
+                fi      
+  
+  smoke_test:
+      docker:
+        - image: alpine:latest
+      steps:
+        - run:
+            name: Test job
+            #Fail the job intentionally to simulate an error.
+            command:  return 1
+        - destroy_environment  
             
 workflows:
   continuous-deployment-workflow:
     jobs:
      # - create_infrastructure
      # - configure_infrastructure
-       - smoke_test
+     # - smoke_test
+       - smoke_test:
+            requires: 
+                - create_infrastructure
