@@ -30,7 +30,7 @@ jobs:
         - run:
             name: Run Playbook and Configure server
             command: |
-                ansible-playbook -i inventory-file.txt main-remote.yml
+                ansible-playbook -i inventory.txt main-remote.yml
             
 workflows:
   continuous-deployment-workflow:

@@ -25,12 +25,12 @@ jobs:
             fingerprints: ["69:85:ab:ec:e3:78:b9:87:4b:e8:e6:5f:3f:aa:13:eb"] 
         - run:
             name: Install Ansible
-        command: |
-            apk add --update ansible
+            command: |
+                apk add --update ansible
         - run:
             name: Run Playbook and Configure server
             command: |
-            ansible-playbook -i inventory-file.txt main-remote.yml
+                ansible-playbook -i inventory-file.txt main-remote.yml
             
 workflows:
   continuous-deployment-workflow:
